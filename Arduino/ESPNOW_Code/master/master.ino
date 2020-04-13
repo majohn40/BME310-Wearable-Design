@@ -45,7 +45,7 @@ unsigned long blinkIntervalMillis = slowBlinkMillis;
 byte ledPin = 14;
 
 //MPU 6050 (Accelerometer)
-
+const int MPU_ADDR = 0x68;
 
 //==============
 
@@ -86,7 +86,12 @@ void setup() {
   particleSensor.setup(ledBrightness, sampleAverage, ledMode, sampleRate, pulseWidth, adcRange); //Configure sensor with these settings
 
 //-------------------------MPU 6050 Initialization--------------------------------------//
-
+  Wire.begin();
+  wire.beginTransmission(MPU_ADDR);
+  Wire.write(0x6B);
+  Wire.write(0);
+  Wire.endTransmission(true);
+  
 
 }
 
