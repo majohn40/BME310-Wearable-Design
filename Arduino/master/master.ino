@@ -22,7 +22,7 @@ uint8_t remoteMac[] = {0x36, 0x33, 0x33, 0x33, 0x33, 0x34};
 // must match the slave struct
 struct __attribute__((packed)) DataStruct {
     //long pulse;
-    long gyro_y
+    int16_t gyro_y;
 };
 
 DataStruct myData;
@@ -45,7 +45,6 @@ unsigned long blinkIntervalMillis = slowBlinkMillis;
 byte ledPin = 14;
 
 //MPU 6050 (Accelerometer)
-const int MPU_ADDR = 0x68;
 
 //==============
 
@@ -68,30 +67,25 @@ void setup() {
     esp_now_register_send_cb(sendCallBackFunction);
 
 //--------------------------MAX 30105 Initialization------------------------------------//
-  // Initialize MAX 30105 Sensor
-  if (!particleSensor.begin(Wire, I2C_SPEED_FAST)) //Use default I2C port, 400kHz speed
-  {
-     Serial.println("MAX30105 was not found. Please check wiring/power. ");
-     while (1);
-  }
-
-  //Setup to sense a nice looking saw tooth on the plotter
-   byte ledBrightness = 0xF0; //Options: 0=Off to 255=50mA
-   byte sampleAverage = 8; //Options: 1, 2, 4, 8, 16, 32
-   byte ledMode = 2; //Options: 1 = Red only, 2 = Red + IR, 3 = Red + IR + Green
-   int sampleRate = 1000; //Options: 50, 100, 200, 400, 800, 1000, 1600, 3200
-   int pulseWidth = 411; //Options: 69, 118, 215, 411
-   int adcRange = 16384; //Options: 2048, 4096, 8192, 16384
-
-  particleSensor.setup(ledBrightness, sampleAverage, ledMode, sampleRate, pulseWidth, adcRange); //Configure sensor with these settings
+//  // Initialize MAX 30105 Sensor
+//  if (!particleSensor.begin(Wire, I2C_SPEED_FAST)) //Use default I2C port, 400kHz speed
+//  {
+//     Serial.println("MAX30105 was not found. Please check wiring/power. ");
+//     while (1);
+//  }
+//
+//  //Setup to sense a nice looking saw tooth on the plotter
+//   byte ledBrightness = 0xF0; //Options: 0=Off to 255=50mA
+//   byte sampleAverage = 8; //Options: 1, 2, 4, 8, 16, 32
+//   byte ledMode = 2; //Options: 1 = Red only, 2 = Red + IR, 3 = Red + IR + Green
+//   int sampleRate = 1000; //Options: 50, 100, 200, 400, 800, 1000, 1600, 3200
+//   int pulseWidth = 411; //Options: 69, 118, 215, 411
+//   int adcRange = 16384; //Options: 2048, 4096, 8192, 16384
+//
+//   particleSensor.setup(ledBrightness, sampleAverage, ledMode, sampleRate, pulseWidth, adcRange); //Configure sensor with these settings
 
 //-------------------------MPU 6050 Initialization--------------------------------------//
-  Wire.begin();
-  wire.beginTransmission(MPU_ADDR);
-  Wire.write(0x6B);
-  Wire.write(0);
-  Wire.endTransmission(true);
-  
+    MPU6050setup();
 
 }
 
@@ -99,16 +93,17 @@ void setup() {
 //==============
 
 void loop() {
-    if (particleSensor.getIR() < 8000) {
-        //Serial.println("SLeeping");
-        ESP.deepSleep(1e6);
-
-    }
-    else{
-        //Serial.println("Waking up");
-        sendData();
-        //Serial.println(particleSensor.getIR()); //Send raw data to plotter
-    }
+  sendData();
+//    if (particleSensor.getIR() < 8000) {
+//        //Serial.println("SLeeping");
+//        ESP.deepSleep(1e6);
+//
+//    }
+//    else{
+//        //Serial.println("Waking up");
+//        sendData();
+//        //Serial.println(particleSensor.getIR()); //Send raw data to plotter
+//    }
 }
 
 //==============
@@ -116,15 +111,22 @@ void loop() {
 void sendData() {
     if (millis() - lastSentMillis >= sendIntervalMillis) {
         lastSentMillis += sendIntervalMillis;
-        long TempIr = particleSensor.getIR();
-        if ((TempIr < 1e9) && (TempIr > -1e9)){
-            myData.Pulse = TempIr;
-        } 
+        
+//---------Add pulseox data to packet--------------------------//
+//        long TempIr = particleSensor.getIR();
+//        if ((TempIr < 1e9) && (TempIr > -1e9)){
+//            myData.Pulse = TempIr;
+//        } 
+
+//---------Add accelerometer data to packet--------------------//
+        myData.gyro_y = MPU6050getData();
+
+//---------Compress Packet and Send----------------------------//
         uint8_t bs[sizeof(myData)];
         memcpy(bs, &myData, sizeof(myData));
         sentMicros = micros();
         esp_now_send(NULL, bs, sizeof(myData)); // NULL means send to all peers
-        Serial.println(myData.pulse);
+        //Serial.println(myData.gyro_y);
         //Serial.println("sent data");
 
     }
