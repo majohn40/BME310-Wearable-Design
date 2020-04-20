@@ -1,6 +1,18 @@
 ScreenManager:
+    id: screen_manager
     WelcomeScreen:
-    LoginScreen:     
+        id: welcome_screen
+        name: 'WelcomeScreen'
+        manager: screen_manager 
+    LoginScreen: 
+        id: login_screen
+        name: 'LoginScreen'
+        manager: screen_manager
+    Dashboard:
+        id: dashboard
+        name: 'Dashboard'
+        manager:screen_manager
+        username: login_screen.username
 
 <WelcomeScreen@Screen>
     name: "main"
@@ -18,15 +30,15 @@ ScreenManager:
             root.manager.transition.direction = "left"
 
 <LoginScreen>:
-    name: 'LoginScreen' 
-
+    name: 'login_screen' 
     MDLabel:
         text: "What would you like us to call you?"
         halign: "center"
         pos_hint: {"center_y":0.7}
         font_style: "H3"
 
-    MDTextFieldRect:
+    MDTextField:
+        id: username_text_field
         size_hint: 0.75, None
         height: "40dp"
         pos_hint: {"center_x":0.5, "center_y": 0.5}
@@ -41,4 +53,14 @@ ScreenManager:
     MDRectangleFlatButton:
         text: "Next"
         pos_hint: {'center_x': 0.9 , 'center_y': 0.1}
-        
+        on_release:
+            root.save_username()
+            
+
+<Dashboard>:
+    name: 'dashboard'
+    MDLabel:
+        text: "Hello "+root.username
+        halign: "center"
+        pos_hint: {"center_y":0.7}
+        font_style:"H3"

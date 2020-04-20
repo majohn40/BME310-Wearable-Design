@@ -10,9 +10,7 @@ from kivymd.uix.button import MDRectangleFlatButton
 from kivymd.uix.label import MDLabel
 from kivymd.font_definitions import theme_font_styles
 from kivy.uix.screenmanager import Screen
-
-
-
+from kivy.properties import ObjectProperty, StringProperty	
 
 
 class MainApp(MDApp):
@@ -23,11 +21,20 @@ class MainApp(MDApp):
 	def build(self):
 		self.root=Builder.load_file("heatsleeveKivy.kv")
 
-
 class WelcomeScreen(Screen):
 	pass
 
 class LoginScreen(Screen):
+	username = StringProperty('')
+	def save_username(self):
+		self.username= self.ids.username_text_field.text;
+		self.manager.current = "Dashboard"
+		self.manager.transition.direction = "left"	
+	pass
+
+class Dashboard(Screen):
+	username = StringProperty('')
+	hello_text = "Hello " + str(username);
 	pass
 
 class ScreenManager(ScreenManager):
