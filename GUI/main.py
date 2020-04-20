@@ -1,33 +1,38 @@
 import kivy
 kivy.require('1.11.1') # replace with your current kivy version !
 
-from kivy.uix.screenmanager import Screen
 
+from kivy.factory import Factory
+from kivy.lang import Builder
 from kivymd.app import MDApp
+from kivy.uix.screenmanager import ScreenManager, Screen
 from kivymd.uix.button import MDRectangleFlatButton
 from kivymd.uix.label import MDLabel
 from kivymd.font_definitions import theme_font_styles
+from kivy.uix.screenmanager import Screen
+
 
 
 
 
 class MainApp(MDApp):
-    def build(self):
-        screen = Screen()
-        screen.add_widget(
-        	MDLabel(
-                    text="Welcome to Heatsleeve",
-                    halign="center",
-                    font_style="H1"
-                )
-        	)
-        screen.add_widget(
-            MDRectangleFlatButton(
-                text="Get Started",
-                pos_hint={"center_x": 0.5, "center_y": 0.2},
-            )
-        )
-        return screen
+	def __init__(self, **kwargs):
+		self.title = "Heatsleeve"
+		super().__init__(**kwargs)
+
+	def build(self):
+		self.root=Builder.load_file("heatsleeveKivy.kv")
 
 
-MainApp().run()
+class WelcomeScreen(Screen):
+	pass
+
+class LoginScreen(Screen):
+	pass
+
+class ScreenManager(ScreenManager):
+	pass
+
+
+if __name__ == "__main__":
+	MainApp().run()

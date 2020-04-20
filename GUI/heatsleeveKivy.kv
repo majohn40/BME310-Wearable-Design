@@ -1,0 +1,28 @@
+ScreenManager:
+    WelcomeScreen:
+    LoginScreen:     
+
+<WelcomeScreen@Screen>
+    name: "main"
+
+    MDLabel:
+        text: "Welcome to Heatsleeve"
+        halign: "center"
+        font_style: "H1"
+
+    MDRectangleFlatButton:
+        text: "Get Started"
+        pos_hint: {"center_x": 0.5, "center_y":0.2}
+        on_release:
+            app.root.current = "LoginScreen"
+            root.manager.transition.direction = "left"
+
+<LoginScreen>:
+    name: 'LoginScreen' 
+
+    MDRaisedButton:
+        text: "Go Back"
+        pos_hint: {'center_x': 0.5, 'center_y': 0.5}
+        on_release:
+            app.root.current = "main"
+            root.manager.transition.direction = "right"
