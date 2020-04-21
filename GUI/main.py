@@ -34,7 +34,7 @@ class LoginScreen(Screen):
 
 class Dashboard(Screen):
 	username = StringProperty('')
-	hello_text = "Hello " + str(username);
+	temperature = 60;
 	pass
 
 class ScreenManager(ScreenManager):

@@ -40,7 +40,7 @@ ScreenManager:
     MDTextField:
         id: username_text_field
         size_hint: 0.75, None
-        height: "40dp"
+        height: "70dp"
         pos_hint: {"center_x":0.5, "center_y": 0.5}
 
     MDRaisedButton:
@@ -59,8 +59,31 @@ ScreenManager:
 
 <Dashboard>:
     name: 'dashboard'
-    MDLabel:
-        text: "Hello "+root.username
-        halign: "center"
-        pos_hint: {"center_y":0.7}
-        font_style:"H3"
+    BoxLayout:
+        orientation: 'horizontal'
+        BoxLayout:
+            orientation: 'vertical'
+            MDLabel:
+                text: "Hello "+root.username
+                halign: "center"
+                font_style:"H4"
+            MDLabel:
+                text: "Current Weather Conditions"
+                halign:"center"
+            BoxLayout:
+                orientation: 'horizontal'
+                MDProgressBar:
+                    orientation: 'vertical'
+                    value: root.temperature
+                MDLabel:
+                    text: str(root.temperature)+" F"
+                    halign: "left"
+            MDLabel:
+                text:"test1"
+            MDLabel:
+                text: "Test2"
+
+        MDLabel:
+            text:"Placeholder"
+        MDLabel:
+            text:"Placeholder"
