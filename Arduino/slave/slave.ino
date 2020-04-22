@@ -28,6 +28,8 @@ void initVariant() {
 struct __attribute__((packed)) DataStruct {
     long Pulse;
     int16_t gyro_y;
+    float temp_ambient;
+    float humidity;
 };
 
 DataStruct myData;

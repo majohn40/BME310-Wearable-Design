@@ -7,6 +7,8 @@
 #include <Wire.h>
 #include "MAX30105.h"
 #include <ESP8266WiFi.h>
+#include <SparkFunHTU21D.h>
+
 extern "C" {
     #include <espnow.h>
 }
@@ -24,6 +26,8 @@ struct __attribute__((packed)) DataStruct {
     //long pulse;
     int16_t gyro_y;
     long Pulse;
+    float temp_ambient;
+    float humidity;
 };
 
 DataStruct myData;
@@ -45,12 +49,17 @@ unsigned long blinkIntervalMillis = slowBlinkMillis;
 MAX30105 particleSensor; 
 byte ledPin = 14;
 
+//-----------------HTU21D Temp and Humidity Sensor---------------------------------//
+HTU21D humiditySensor;
+
+
 //==============
 
 void setup() {
+     
+      Serial.begin(115200); Serial.println();
 
 //-----------------------Wireless Initiliazation--------------------------------------//
-    Serial.begin(115200); Serial.println();
     Serial.println("Starting EspnowController.ino");
 
     WiFi.mode(WIFI_STA); // Station mode for esp-now controller
@@ -86,6 +95,8 @@ void setup() {
 //-------------------------MPU 6050 Initialization--------------------------------------//
     MPU6050setup();
 
+//-------------------------HTU21D Initiallization---------------------------------------//
+    humiditySensor.begin();
 }
 
 
@@ -120,6 +131,10 @@ void sendData() {
 //---------Add accelerometer data to packet--------------------//
         myData.gyro_y = MPU6050getData();
 
+//---------Add temp and humidity data to packet ---------------// 
+        myData.temp_ambient = humiditySensor.readTemperature();
+        myData.humidity = humiditySensor.readHumidity();
+
 //---------Compress Packet and Send----------------------------//
         uint8_t bs[sizeof(myData)];
         memcpy(bs, &myData, sizeof(myData));
@@ -127,6 +142,8 @@ void sendData() {
         esp_now_send(NULL, bs, sizeof(myData)); // NULL means send to all peers
         Serial.println(myData.gyro_y);
         Serial.println(myData.Pulse);
+        Serial.println(myData.temp_ambient);
+        Serial.println(myData.humidity);
         //Serial.println("sent data");
 
     }
