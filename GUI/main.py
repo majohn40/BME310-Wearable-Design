@@ -35,6 +35,7 @@ class LoginScreen(Screen):
 class Dashboard(Screen):
 	username = StringProperty('')
 	temperature = 60;
+	heartrate = 70;
 	pass
 
 class ScreenManager(ScreenManager):

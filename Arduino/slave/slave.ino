@@ -26,7 +26,7 @@ void initVariant() {
 
 //-----------------------Packet Setup--------------------------------//
 struct __attribute__((packed)) DataStruct {
-    //long Pulse;
+    long Pulse;
     int16_t gyro_y;
 };
 

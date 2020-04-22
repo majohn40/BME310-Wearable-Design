@@ -60,30 +60,57 @@ ScreenManager:
 <Dashboard>:
     name: 'dashboard'
     BoxLayout:
-        orientation: 'horizontal'
+        orientation: 'vertical'
+        MDLabel:
+            text: "Hello "+root.username
+            halign: "center"
+            font_style:"H3"
+            size_hint: (1,0.2)
         BoxLayout:
-            orientation: 'vertical'
-            MDLabel:
-                text: "Hello "+root.username
-                halign: "center"
-                font_style:"H4"
-            MDLabel:
-                text: "Current Weather Conditions"
-                halign:"center"
+            orientation: 'horizontal'
             BoxLayout:
-                orientation: 'horizontal'
-                MDProgressBar:
-                    orientation: 'vertical'
-                    value: root.temperature
+                orientation: 'vertical'
                 MDLabel:
-                    text: str(root.temperature)+" F"
-                    halign: "left"
-            MDLabel:
-                text:"test1"
-            MDLabel:
-                text: "Test2"
+                    text: "Current Weather Conditions"
+                    halign:"center"
+                    font_style:"H4"
+                BoxLayout:
+                    orientation: 'horizontal'
+                    MDProgressBar:
+                        orientation: 'vertical'
+                        value: root.temperature
+                    MDLabel:
+                        text: str(root.temperature)+u"\N{DEGREE SIGN}"+"F"
+                        halign: "left"
+                MDLabel:
+                    text:""
+                MDLabel:
+                    text: ""
+            BoxLayout:
+                orientation: 'vertical'
+                MDLabel:
+                    text: "Workout History"
+                    halign: "center"
+                    font_style: "H4"
 
-        MDLabel:
-            text:"Placeholder"
-        MDLabel:
-            text:"Placeholder"
+                BoxLayout:
+                    orientation: 'vertical'
+                    MDLabel:
+                        text:"Average Heartrate"
+                        halign: "center"
+                        size_hint: (1, 0.2)
+                    MDLabel:
+                        text: str(root.heartrate)
+                        size_hint: (1,0.8)
+                        halign: "center"
+                        font_style: "H2"
+                MDLabel:
+                    text:""
+                
+                MDLabel:
+                    text:""
+                MDLabel:
+                    text:""
+
+            MDLabel:
+                text:""

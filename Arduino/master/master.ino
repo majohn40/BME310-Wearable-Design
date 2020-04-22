@@ -5,7 +5,7 @@
 //--------------------------Include Statements---------------------------/
 
 #include <Wire.h>
-//#include "MAX30105.h"
+#include "MAX30105.h"
 #include <ESP8266WiFi.h>
 extern "C" {
     #include <espnow.h>
@@ -23,6 +23,7 @@ uint8_t remoteMac[] = {0x36, 0x33, 0x33, 0x33, 0x33, 0x34};
 struct __attribute__((packed)) DataStruct {
     //long pulse;
     int16_t gyro_y;
+    long Pulse;
 };
 
 DataStruct myData;
@@ -40,11 +41,9 @@ unsigned long fastBlinkMillis = 200;
 unsigned long slowBlinkMillis = 700;
 unsigned long blinkIntervalMillis = slowBlinkMillis;
 
-//MAX 30105 (PulseOx)
-//MAX30105 particleSensor; 
+//-----------------MAX 30105 (PulseOx)---------------------------------------------//
+MAX30105 particleSensor; 
 byte ledPin = 14;
-
-//MPU 6050 (Accelerometer)
 
 //==============
 
@@ -67,22 +66,22 @@ void setup() {
     esp_now_register_send_cb(sendCallBackFunction);
 
 //--------------------------MAX 30105 Initialization------------------------------------//
-//  // Initialize MAX 30105 Sensor
-//  if (!particleSensor.begin(Wire, I2C_SPEED_FAST)) //Use default I2C port, 400kHz speed
-//  {
-//     Serial.println("MAX30105 was not found. Please check wiring/power. ");
-//     while (1);
-//  }
-//
-//  //Setup to sense a nice looking saw tooth on the plotter
-//   byte ledBrightness = 0xF0; //Options: 0=Off to 255=50mA
-//   byte sampleAverage = 8; //Options: 1, 2, 4, 8, 16, 32
-//   byte ledMode = 2; //Options: 1 = Red only, 2 = Red + IR, 3 = Red + IR + Green
-//   int sampleRate = 1000; //Options: 50, 100, 200, 400, 800, 1000, 1600, 3200
-//   int pulseWidth = 411; //Options: 69, 118, 215, 411
-//   int adcRange = 16384; //Options: 2048, 4096, 8192, 16384
-//
-//   particleSensor.setup(ledBrightness, sampleAverage, ledMode, sampleRate, pulseWidth, adcRange); //Configure sensor with these settings
+  // Initialize MAX 30105 Sensor
+  if (!particleSensor.begin(Wire, I2C_SPEED_FAST)) //Use default I2C port, 400kHz speed
+  {
+     Serial.println("MAX30105 was not found. Please check wiring/power. ");
+     while (1);
+  }
+
+  //Setup to sense a nice looking saw tooth on the plotter
+   byte ledBrightness = 0xF0; //Options: 0=Off to 255=50mA
+   byte sampleAverage = 8; //Options: 1, 2, 4, 8, 16, 32
+   byte ledMode = 2; //Options: 1 = Red only, 2 = Red + IR, 3 = Red + IR + Green
+   int sampleRate = 1000; //Options: 50, 100, 200, 400, 800, 1000, 1600, 3200
+   int pulseWidth = 411; //Options: 69, 118, 215, 411
+   int adcRange = 16384; //Options: 2048, 4096, 8192, 16384
+
+   particleSensor.setup(ledBrightness, sampleAverage, ledMode, sampleRate, pulseWidth, adcRange); //Configure sensor with these settings
 
 //-------------------------MPU 6050 Initialization--------------------------------------//
     MPU6050setup();
@@ -113,10 +112,10 @@ void sendData() {
         lastSentMillis += sendIntervalMillis;
         
 //---------Add pulseox data to packet--------------------------//
-//        long TempIr = particleSensor.getIR();
-//        if ((TempIr < 1e9) && (TempIr > -1e9)){
-//            myData.Pulse = TempIr;
-//        } 
+        long TempIr = particleSensor.getIR();
+        if ((TempIr < 1e9) && (TempIr > -1e9)){
+            myData.Pulse = TempIr;
+        } 
 
 //---------Add accelerometer data to packet--------------------//
         myData.gyro_y = MPU6050getData();
@@ -126,7 +125,8 @@ void sendData() {
         memcpy(bs, &myData, sizeof(myData));
         sentMicros = micros();
         esp_now_send(NULL, bs, sizeof(myData)); // NULL means send to all peers
-        //Serial.println(myData.gyro_y);
+        Serial.println(myData.gyro_y);
+        Serial.println(myData.Pulse);
         //Serial.println("sent data");
 
     }
