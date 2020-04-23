@@ -30,6 +30,7 @@ struct __attribute__((packed)) DataStruct {
     int16_t gyro_y;
     float temp_ambient;
     float humidity;
+    float red, green, blue;
 };
 
 DataStruct myData;

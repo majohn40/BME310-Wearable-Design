@@ -8,6 +8,8 @@
 #include "MAX30105.h"
 #include <ESP8266WiFi.h>
 #include <SparkFunHTU21D.h>
+#include "Adafruit_TCS34725.h"
+
 
 extern "C" {
     #include <espnow.h>
@@ -28,6 +30,7 @@ struct __attribute__((packed)) DataStruct {
     long Pulse;
     float temp_ambient;
     float humidity;
+    float red, green, blue;
 };
 
 DataStruct myData;
@@ -52,12 +55,15 @@ byte ledPin = 14;
 //-----------------HTU21D Temp and Humidity Sensor---------------------------------//
 HTU21D humiditySensor;
 
+//-----------------TCS34725 Color Sensor-------------------------------------------//
+Adafruit_TCS34725 tcs = Adafruit_TCS34725(TCS34725_INTEGRATIONTIME_50MS, TCS34725_GAIN_4X);
+
 
 //==============
 
 void setup() {
      
-      Serial.begin(115200); Serial.println();
+    Serial.begin(115200); Serial.println();
 
 //-----------------------Wireless Initiliazation--------------------------------------//
     Serial.println("Starting EspnowController.ino");
@@ -97,6 +103,9 @@ void setup() {
 
 //-------------------------HTU21D Initiallization---------------------------------------//
     humiditySensor.begin();
+
+//-------------------------TCS34725 Initialization (Color Sensor)-----------------------//
+    tcs.begin();
 }
 
 
@@ -135,15 +144,28 @@ void sendData() {
         myData.temp_ambient = humiditySensor.readTemperature();
         myData.humidity = humiditySensor.readHumidity();
 
+//---------Add color data to packet----------------------------//
+        float red, green, blue;
+        tcs.getRGB(&red, &green, &blue);
+        myData.red = red;
+        myData.green = green;
+        myData.blue = blue;
+
 //---------Compress Packet and Send----------------------------//
         uint8_t bs[sizeof(myData)];
         memcpy(bs, &myData, sizeof(myData));
         sentMicros = micros();
         esp_now_send(NULL, bs, sizeof(myData)); // NULL means send to all peers
+
+//--------Debugging Statements--------------------------------//
         Serial.println(myData.gyro_y);
         Serial.println(myData.Pulse);
         Serial.println(myData.temp_ambient);
         Serial.println(myData.humidity);
+        Serial.print("R:\t"); Serial.print(int(myData.red)); 
+        Serial.print("\tG:\t"); Serial.print(int(myData.green)); 
+        Serial.print("\tB:\t"); Serial.print(int(myData.blue));
+        Serial.print("\n");
         //Serial.println("sent data");
 
     }
