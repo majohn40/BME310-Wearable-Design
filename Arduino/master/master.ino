@@ -4,11 +4,14 @@
 
 //--------------------------Include Statements---------------------------/
 
+#include <SPI.h>
 #include <Wire.h>
 #include "MAX30105.h"
 #include <ESP8266WiFi.h>
 #include <SparkFunHTU21D.h>
 #include "Adafruit_TCS34725.h"
+#include <Adafruit_GFX.h>
+#include <Adafruit_SSD1306.h>
 
 
 extern "C" {
@@ -58,6 +61,12 @@ HTU21D humiditySensor;
 //-----------------TCS34725 Color Sensor-------------------------------------------//
 Adafruit_TCS34725 tcs = Adafruit_TCS34725(TCS34725_INTEGRATIONTIME_50MS, TCS34725_GAIN_4X);
 
+//-----------------OLED Display----------------------------------------------------//
+#define SCREEN_WIDTH 128
+#define SCREEN_HEIGHT 32
+#define OLED_RESET -1
+
+Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
 
 //==============
 
@@ -106,6 +115,11 @@ void setup() {
 
 //-------------------------TCS34725 Initialization (Color Sensor)-----------------------//
     tcs.begin();
+
+//-------------------------OLED Initialization------------------------------------------//
+    display.begin(SSD1306_SWITCHCAPVCC, 0x3C);
+    welcomescroll();
+  
 }
 
 
@@ -185,3 +199,28 @@ void sendCallBackFunction(uint8_t* mac, uint8_t sendStatus) {
 }
 
 //================
+
+//---------------------OLED Control Functions--------------------------------------//
+void welcomescroll(void) {
+  display.clearDisplay();
+
+  display.setTextSize(2); // Draw 2X-scale text
+  display.setTextColor(SSD1306_WHITE);
+  display.setCursor(10, 0);
+  display.println(F("Welcome to HeatSleeve!"));
+  display.display();      // Show initial text
+  delay(100);
+
+  // Scroll in various directions, pausing in-between:
+  display.startscrollright(0x00, 0x0F);
+  delay(3000);
+  display.stopscroll();
+  delay(1000);
+
+  display.clearDisplay();
+  display.setTextSize(1);
+  display.setTextColor(SSD1306_WHITE);        // Draw white text
+  display.setCursor(0,0);             // Start at top-left corner
+  display.println(F("Welcome to HeatSleeve!"));
+  
+}
