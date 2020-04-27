@@ -1,7 +1,7 @@
 import serial
 
 ser = serial.Serial(
-    port='COM5',\
+    port='COM4',\
     baudrate=115200,\
     parity=serial.PARITY_NONE,\
     stopbits=serial.STOPBITS_ONE,\
@@ -12,9 +12,8 @@ print("connected to: " + ser.portstr)
 count=1
 
 while True:
-    line = ser.readline()
-
-    print(str(count) + str(': ') + chr(line) )
-    count = count+1
+	while ser.in_waiting:
+		sensor_reading = ser.readline()
+		print(sensor_reading.decode('utf-8'))
 
 ser.close()
