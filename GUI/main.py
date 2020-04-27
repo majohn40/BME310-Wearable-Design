@@ -23,7 +23,6 @@ class MainApp(MDApp):
 		super().__init__(**kwargs)
 
 	def on_stop(self):
-		print("Onstop")
 		self.root.screens[2].stop.set()
 
 
@@ -47,10 +46,8 @@ class Dashboard(Screen):
 	count = NumericProperty()
 	temperature = 60;
 	heartrate = 70;
-	stop_running = False;
 
 	stop = threading.Event()
-
 
 	def __init__(self, **kwargs):
 		super(Dashboard, self).__init__(**kwargs)
@@ -60,7 +57,6 @@ class Dashboard(Screen):
 
 	def start_serial_thread(self, count):
 		threading.Thread(target=self.serial_thread, args=(count,)).start()
-		print("New thread")
 	
 	def serial_thread(self, count):
 		while True:
