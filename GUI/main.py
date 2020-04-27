@@ -23,7 +23,9 @@ class MainApp(MDApp):
 		super().__init__(**kwargs)
 
 	def on_stop(self):
+		print("Onstop")
 		self.root.screens[2].stop.set()
+
 
 	def build(self):
 		self.root=Builder.load_file("heatsleeveKivy.kv")
@@ -36,7 +38,7 @@ class LoginScreen(Screen):
 	def save_username(self):
 		self.username= self.ids.username_text_field.text;
 		self.manager.current = "Dashboard"
-		self.manager.transition.direction = "left"	
+		self.manager.transition.direction = "left"
 	pass
 
 class Dashboard(Screen):
@@ -45,21 +47,28 @@ class Dashboard(Screen):
 	count = NumericProperty()
 	temperature = 60;
 	heartrate = 70;
+	stop_running = False;
 
 	stop = threading.Event()
+
+
 	def __init__(self, **kwargs):
 		super(Dashboard, self).__init__(**kwargs)
 		self.test_count = "test1"
 		self.count = 0
+		self.start_serial_thread(self.count)
 
-	def start_serial_thread(self):
-		threading.Thread(target=self.serial_thread).start()
+	def start_serial_thread(self, count):
+		threading.Thread(target=self.serial_thread, args=(count,)).start()
 		print("New thread")
 	
 	def serial_thread(self, count):
-
-		if self.stop.is_set():
-			return
+		while True:
+			if self.stop.is_set():
+				return
+			self.get_count(self.count)
+			print("Counting")
+			time.sleep(1)
 
 	@mainthread
 	def get_count(self, count):
