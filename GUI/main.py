@@ -3,6 +3,7 @@ kivy.require('1.11.1') # replace with your current kivy version !
 
 import time
 import threading
+import serial
 
 from kivy.factory import Factory
 from kivy.lang import Builder
@@ -42,8 +43,8 @@ class LoginScreen(Screen):
 
 class Dashboard(Screen):
 	username = StringProperty('')
-	test_count = StringProperty()
-	count = NumericProperty()
+	step_count_text = StringProperty()
+	step_count = NumericProperty()
 	temperature = 60;
 	heartrate = 70;
 
@@ -51,25 +52,42 @@ class Dashboard(Screen):
 
 	def __init__(self, **kwargs):
 		super(Dashboard, self).__init__(**kwargs)
-		self.test_count = "test1"
-		self.count = 0
-		self.start_serial_thread(self.count)
+		self.step_count = 0
+		self.start_serial_thread()
 
-	def start_serial_thread(self, count):
-		threading.Thread(target=self.serial_thread, args=(count,)).start()
+	def start_serial_thread(self):
+		threading.Thread(target=self.serial_thread).start()
+		##threading.Thread(target=self.serial_thread, args=(arg1,)).start()
 	
-	def serial_thread(self, count):
+	def serial_thread(self):
+		##When this thread is initialized, open serial port
+		ser = serial.Serial(
+		    port='COM4',\
+		    baudrate=115200,\
+		    parity=serial.PARITY_NONE,\
+		    stopbits=serial.STOPBITS_ONE,\
+		    bytesize=serial.EIGHTBITS,\
+		        timeout=0)
+
+		ser.flushInput()
+		ser.flushOutput()
+
 		while True:
+			##If GUI is closed, stop this thread so python can exit fully
 			if self.stop.is_set():
 				return
-			self.get_count(self.count)
-			print("Counting")
+			##Read Serial Data, checking first if there is data available
+			if ser.in_waiting:
+				sensor_packet= ser.readline().decode('utf-8')
+				sensors = sensor_packet.split("\t")
+				if len(sensors)==7: ##Stop code from exiting if it reads an incomplete packet
+					self.update_step_count(sensors[0])
 			time.sleep(1)
 
 	@mainthread
-	def get_count(self, count):
-		self.count = count+1;
-		self.test_count = str(self.count);
+	def update_step_count(self, new_val):
+		self.step_count = new_val;
+		self.step_count_text = str(self.step_count);
 
 	pass
 

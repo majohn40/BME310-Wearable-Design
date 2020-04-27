@@ -188,7 +188,6 @@ void sendData() {
 
 void sendCallBackFunction(uint8_t* mac, uint8_t sendStatus) {
     ackMicros = micros();
-    Serial.println();
     if (sendStatus == 0) {
         blinkIntervalMillis = fastBlinkMillis;
     }
