@@ -172,14 +172,13 @@ void sendData() {
         esp_now_send(NULL, bs, sizeof(myData)); // NULL means send to all peers
 
 //--------Debugging Statements--------------------------------//
-        Serial.println(myData.gyro_y);
-        Serial.println(myData.Pulse);
-        Serial.println(myData.temp_ambient);
-        Serial.println(myData.humidity);
-        Serial.print("R:\t"); Serial.print(int(myData.red)); 
-        Serial.print("\tG:\t"); Serial.print(int(myData.green)); 
-        Serial.print("\tB:\t"); Serial.print(int(myData.blue));
-        Serial.print("\n");
+        Serial.print(myData.gyro_y);Serial.print("\t");
+        Serial.print(myData.Pulse);Serial.print("\t");
+        Serial.print(myData.temp_ambient);Serial.print("\t");
+        Serial.print(myData.humidity); Serial.print("\t"); 
+        Serial.print(int(myData.red)); Serial.print("\t"); 
+        Serial.print(int(myData.green)); Serial.print("\t"); 
+        Serial.print(int(myData.blue));Serial.print("\n");
         //Serial.println("sent data");
 
     }
