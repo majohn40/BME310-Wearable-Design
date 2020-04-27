@@ -100,13 +100,16 @@ ScreenManager:
                         halign: "center"
                         size_hint: (1, 0.2)
                     MDLabel:
-                        text: str(root.count)
+                        text: root.test_count
                         size_hint: (1,0.8)
                         halign: "center"
                         font_style: "H2"
-                MDLabel:
-                    text:""
-                
+                MDRectangleFlatButton:
+                    text: "CountUp"
+                    pos_hint: {'center_x': 0.9 , 'center_y': 0.1}
+                    on_release:
+                        root.get_count(root.count)
+
                 MDLabel:
                     text:""
                 MDLabel:

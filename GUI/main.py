@@ -11,10 +11,9 @@ from kivy.uix.screenmanager import ScreenManager, Screen
 from kivymd.uix.button import MDRectangleFlatButton
 from kivymd.uix.label import MDLabel
 from kivymd.font_definitions import theme_font_styles
-from kivy.properties import ObjectProperty, StringProperty	
+from kivy.properties import ObjectProperty, StringProperty, NumericProperty
 from kivy.uix.screenmanager import Screen
 from kivy.clock import Clock, mainthread
-from kivy.logger import Logger
 
 
 
@@ -42,30 +41,30 @@ class LoginScreen(Screen):
 
 class Dashboard(Screen):
 	username = StringProperty('')
+	test_count = StringProperty()
+	count = NumericProperty()
 	temperature = 60;
 	heartrate = 70;
-	count = 0;
 
 	stop = threading.Event()
+	def __init__(self, **kwargs):
+		super(Dashboard, self).__init__(**kwargs)
+		self.test_count = "test1"
+		self.count = 0
+
 	def start_serial_thread(self):
 		threading.Thread(target=self.serial_thread).start()
 		print("New thread")
 	
-	def serial_thread(self):
-		time.sleep(1000);
-		if counter <5:
-			counter += 1
-			self.get_count(counter)
+	def serial_thread(self, count):
 
 		if self.stop.is_set():
-			Logger.critical("Serial Thread Exiting".format(thing))
 			return
 
 	@mainthread
 	def get_count(self, count):
-		self.count = counter
-
-
+		self.count = count+1;
+		self.test_count = str(self.count);
 
 	pass
 
