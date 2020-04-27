@@ -1,4 +1,5 @@
 import serial
+import time
 
 ser = serial.Serial(
     port='COM4',\
@@ -11,9 +12,16 @@ ser = serial.Serial(
 print("connected to: " + ser.portstr)
 count=1
 
+ser.flushInput()
+ser.flushOutput()
+
 while True:
-	while ser.in_waiting:
-		sensor_reading = ser.readline()
-		print(sensor_reading.decode('utf-8'))
+	if ser.in_waiting:
+		sensor_packet = ser.readline().decode('utf-8')
+		sensors = sensor_packet.split("\t")
+		if len(sensors) == 7:
+			print("Accelerometer: "+sensors[0])
+		print(sensor_packet)
+		time.sleep(0.01)
 
 ser.close()
