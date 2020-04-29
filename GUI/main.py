@@ -45,7 +45,7 @@ class Dashboard(Screen):
 	username = StringProperty('')
 	step_count_text = StringProperty()
 	step_count = NumericProperty()
-	temperature = 60;
+	temperature = NumericProperty()
 	heartrate = 70;
 
 	stop = threading.Event()
@@ -81,13 +81,22 @@ class Dashboard(Screen):
 				sensor_packet= ser.readline().decode('utf-8')
 				sensors = sensor_packet.split("\t")
 				if len(sensors)==7: ##Stop code from exiting if it reads an incomplete packet
+					temperature_f = 1.8*float(sensors[2]) + 32
+					self.update_temp(temperature_f)
 					self.update_step_count(sensors[0])
+
 			time.sleep(1)
 
 	@mainthread
 	def update_step_count(self, new_val):
 		self.step_count = new_val;
 		self.step_count_text = str(self.step_count);
+
+	pass
+
+	@mainthread 
+	def update_temp(self, new_val):
+		self.temperature = new_val;
 
 	pass
 
