@@ -46,7 +46,8 @@ class Dashboard(Screen):
 	step_count_text = StringProperty()
 	step_count = NumericProperty()
 	temperature = NumericProperty()
-	heartrate = 70;
+	humidity =  NumericProperty()
+	heartrate = 0
 
 	stop = threading.Event()
 
@@ -78,29 +79,37 @@ class Dashboard(Screen):
 				return
 			##Read Serial Data, checking first if there is data available
 			if ser.in_waiting:
-				sensor_packet= ser.readline().decode('utf-8')
+				while True:
+					try:
+						sensor_packet= ser.readline().decode('utf-8')
+						break
+					except:
+						"Invalid character, try again"
 				sensors = sensor_packet.split("\t")
 				if len(sensors)==7: ##Stop code from exiting if it reads an incomplete packet
 					temperature_f = 1.8*float(sensors[2]) + 32
 					self.update_temp(temperature_f)
 					self.update_step_count(sensors[0])
+					self.update_humidity(sensors[3])
 
 			time.sleep(1)
 
+	#Functions to update GUI Values
 	@mainthread
 	def update_step_count(self, new_val):
 		self.step_count = new_val;
 		self.step_count_text = str(self.step_count);
 
-	pass
-
 	@mainthread 
 	def update_temp(self, new_val):
 		self.temperature = new_val;
 
+
+	@mainthread
+	def update_humidity(self, new_val):
+		self.humidity = new_val;
+
 	pass
-
-
 class ScreenManager(ScreenManager):
 	pass
 

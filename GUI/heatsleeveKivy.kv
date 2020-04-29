@@ -82,8 +82,14 @@ ScreenManager:
                     MDLabel:
                         text: str(root.temperature)+u"\N{DEGREE SIGN}"+"F"
                         halign: "left"
-                MDLabel:
-                    text:""
+                BoxLayout:
+                    orientation: 'horizontal'
+                    MDProgressBar:
+                        orientation: 'vertical'
+                        value: root.humidity
+                    MDLabel:
+                        text: str(root.humidity)+"% Humidity"
+                        halign: "left"
                 MDLabel:
                     text: ""
             BoxLayout:
@@ -96,7 +102,7 @@ ScreenManager:
                 BoxLayout:
                     orientation: 'vertical'
                     MDLabel:
-                        text:"Average Heartrate"
+                        text:"Accelerometer Data"
                         halign: "center"
                         size_hint: (1, 0.2)
                     MDLabel:
