@@ -43,7 +43,6 @@ class LoginScreen(Screen):
 
 class Dashboard(Screen):
 	username = StringProperty('')
-	step_count_text = StringProperty()
 	step_count = NumericProperty()
 	temperature = NumericProperty()
 	humidity =  NumericProperty()
@@ -92,12 +91,10 @@ class Dashboard(Screen):
 					self.update_step_count(sensors[7])
 					self.update_humidity(sensors[3])
 
-
 	#Functions to update GUI Values
 	@mainthread
 	def update_step_count(self, new_val):
 		self.step_count = new_val;
-		self.step_count_text = str(self.step_count);
 
 	@mainthread 
 	def update_temp(self, new_val):
