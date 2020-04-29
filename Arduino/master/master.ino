@@ -34,6 +34,7 @@ struct __attribute__((packed)) DataStruct {
     float temp_ambient;
     float humidity;
     float red, green, blue;
+    int stepcount;
 };
 
 DataStruct myData;
@@ -67,6 +68,10 @@ Adafruit_TCS34725 tcs = Adafruit_TCS34725(TCS34725_INTEGRATIONTIME_50MS, TCS3472
 #define OLED_RESET -1
 
 Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
+
+//----------------Accelerometer----------------------------------------------------//
+int paceflag = 0;
+int stepcount = 0;
 
 //==============
 
@@ -153,6 +158,9 @@ void sendData() {
 
 //---------Add accelerometer data to packet--------------------//
         myData.gyro_y = MPU6050getData();
+        stepcount = int(getStepCount(&paceflag, stepcount));
+        myData.stepcount = stepcount;
+
 
 //---------Add temp and humidity data to packet ---------------// 
         myData.temp_ambient = humiditySensor.readTemperature();
@@ -178,7 +186,8 @@ void sendData() {
         Serial.print(myData.humidity); Serial.print("\t"); 
         Serial.print(int(myData.red)); Serial.print("\t"); 
         Serial.print(int(myData.green)); Serial.print("\t"); 
-        Serial.print(int(myData.blue));Serial.print("\n");
+        Serial.print(int(myData.blue));Serial.print("\t");
+        Serial.print(myData.stepcount);Serial.print("\n");
         //Serial.println("sent data");
 
     }

@@ -22,7 +22,8 @@ char* convert_int16_to_str(int16_t i) {
 }
 
 
-int getStepCount(int* paceflag, int* stepcount){
+int getStepCount(int* paceflag, int stepcount){
+  gyro_y = MPU6050getData();
   if (*paceflag == 0){
     if (gyro_y > 2000){
       stepcount = stepcount +1;
@@ -34,7 +35,7 @@ int getStepCount(int* paceflag, int* stepcount){
       *paceflag = 0;
     }
   }
-  return *stepcount;
+  return stepcount;
 }
 
 int16_t MPU6050getData(){
