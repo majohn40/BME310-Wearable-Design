@@ -61,65 +61,88 @@ ScreenManager:
     name: 'dashboard'
     BoxLayout:
         orientation: 'vertical'
-        MDLabel:
-            text: "Hello "+root.username
-            halign: "center"
-            font_style:"H3"
+        BoxLayout:
+            orientation: 'horizontal'
             size_hint: (1,0.2)
+            MDLabel:
+                text:""
+                size_hint:(0.05, 1)
+            MDLabel:
+                text: "Hello "+root.username
+                halign:"left"
+                font_style:"H3"
+
         BoxLayout:
             orientation: 'horizontal'
             BoxLayout:
+                size_hint: (0.2,1)
                 orientation: 'vertical'
-                MDLabel:
-                    text: "Current Weather Conditions"
-                    halign:"center"
-                    font_style:"H4"
-                BoxLayout:
-                    orientation: 'horizontal'
-                    MDProgressBar:
-                        orientation: 'vertical'
-                        value: root.temperature
-                    MDLabel:
-                        text: str(root.temperature)+u"\N{DEGREE SIGN}"+"F"
-                        halign: "left"
-                BoxLayout:
-                    orientation: 'horizontal'
-                    MDProgressBar:
-                        orientation: 'vertical'
-                        value: root.humidity
-                    MDLabel:
-                        text: str(root.humidity)+"% Humidity"
-                        halign: "left"
                 MDLabel:
                     text: ""
-            BoxLayout:
-                orientation: 'vertical'
-                MDLabel:
-                    text: "Workout History"
-                    halign: "center"
-                    font_style: "H4"
-
+                    size_hint:(1,0.1)
                 BoxLayout:
                     orientation: 'vertical'
                     MDLabel:
-                        text:"Step Count"
+                        text: "Temperature"
+                        halign: "center"
+                        size_hint: (1,0.2)
+                    MDLabel:
+                        size_hint: (1, 0.8)
+                        text: str(root.temperature)+u"\N{DEGREE SIGN}"+"F"
+                        halign: "center"
+                        font_style: "H3"
+                BoxLayout:
+                    orientation: 'vertical'
+                    MDLabel:
+                        text:"Humidity"
                         halign: "center"
                         size_hint: (1, 0.2)
                     MDLabel:
-                        text: str(root.step_count)
+                        text: str(root.humidity)+" %"
                         size_hint: (1,0.8)
                         halign: "center"
-                        font_style: "H2"
-                MDRectangleFlatButton:
-                    text: "CountUp"
-                    pos_hint: {'center_x': 0.9 , 'center_y': 0.1}
-                    on_release:
+                        font_style: "H3"
+                BoxLayout:
+                    orientation: 'vertical'
+                    MDLabel:
+                        text:"UV Index"
+                        halign: "center"
+                        size_hint: (1, 0.2)
+                    MDLabel:
+                        text: str(root.uv_index)
+                        size_hint: (1,0.8)
+                        halign: "center"
+                        font_style: "H3"
+                BoxLayout:
+                    orientation: 'vertical'
+                    MDLabel:
+                        text:"Heat Index"
+                        halign: "center"
+                        size_hint: (1, 0.2)
+                    MDLabel:
+                        text: str(root.heat_index)
+                        size_hint: (1,0.8)
+                        halign: "center"
+                        font_style: "H3"
+            BoxLayout:
+                orientation: 'vertical'
+                size_hint: (0.8,1)
+                MyFigure:
+                BoxLayout:
+                    orientation: 'horizontal'
+                    size_hint:
+                    BoxLayout:
+                        size_hint: (0.3, 1)
+                        orientation: 'vertical'
+                        MDLabel:                            
+                            text:"Step Count"
+                            halign: "center"
+                            size_hint: (1, 0.2)
+                        MDLabel:
+                            text: str(root.step_count)
+                            size_hint: (1,0.8)
+                            halign: "center"
+                            font_style: "H2"
 
 
-                MDLabel:
-                    text:""
-                MDLabel:
-                    text:""
 
-            MDLabel:
-                text:""

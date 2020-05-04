@@ -16,6 +16,10 @@ from kivy.properties import ObjectProperty, StringProperty, NumericProperty
 from kivy.uix.screenmanager import Screen
 from kivy.clock import Clock, mainthread
 
+from kivy.garden.matplotlib.backend_kivyagg import FigureCanvasKivyAgg
+from kivy.app import App
+from kivy.uix.boxlayout import BoxLayout
+import matplotlib.pyplot as plt
 
 
 class MainApp(MDApp):
@@ -47,12 +51,25 @@ class Dashboard(Screen):
 	temperature = NumericProperty()
 	humidity =  NumericProperty()
 	heartrate = 0
+	red = NumericProperty()
+	green = NumericProperty()
+	blue = NumericProperty()
+	uv_index = NumericProperty()
+	heat_index = NumericProperty()
 
 	stop = threading.Event()
 
 	def __init__(self, **kwargs):
 		super(Dashboard, self).__init__(**kwargs)
 		self.step_count = 0
+		self.uv_index = 0
+		self.heat_index = 100
+		fig = plt.figure()
+		plt.plot([1, 23, 2, 4])
+		fig.patch.set_facecolor((250/255,250/255,250/255,1))
+		ax = plt.gca()
+		ax.set_facecolor((250/255,250/255,250/255,1))
+		plt.ylabel('some numbers')
 		self.start_serial_thread()
 
 	def start_serial_thread(self):
@@ -88,8 +105,12 @@ class Dashboard(Screen):
 				if len(sensors)==8: ##Stop code from exiting if it reads an incomplete packet
 					temperature_f = 1.8*float(sensors[2]) + 32
 					self.update_temp(temperature_f)
-					self.update_step_count(sensors[7])
 					self.update_humidity(sensors[3])
+					self.update_red(sensors[4])
+					self.update_green(sensors[5])
+					self.update_blue(sensors[6])
+					self.update_step_count(sensors[7])
+
 
 	#Functions to update GUI Values
 	@mainthread
@@ -105,9 +126,34 @@ class Dashboard(Screen):
 	def update_humidity(self, new_val):
 		self.humidity = new_val;
 
+	@mainthread
+	def update_red (self, new_val):
+		self.red = new_val;
+
+	@mainthread
+	def update_green (self, new_val):
+		self.green = new_val;
+
+	@mainthread
+	def update_blue (self, new_val):
+		self.blue = new_val;
+
+	@mainthread
+	def update_uv_index (self, new_val):
+		self.uv_index = new_val;
+
+	@mainthread
+	def update_heat_index(self, new_val):
+		self.heat_index = new_val;
+
 	pass
+
+class MyFigure(FigureCanvasKivyAgg):
+    def __init__(self, **kwargs):
+        super(MyFigure, self).__init__(plt.gcf(), **kwargs)
+
 class ScreenManager(ScreenManager):
-	pass
+	    pass
 
 
 if __name__ == "__main__":
