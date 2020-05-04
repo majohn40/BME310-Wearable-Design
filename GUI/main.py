@@ -115,8 +115,8 @@ class Dashboard(Screen):
 				sensors = sensor_packet.split("\t")
 				if len(sensors)==8: ##Stop code from exiting if it reads an incomplete packet
 					temperature_f = 1.8*float(sensors[2]) + 32
-					self.update_temp(temperature_f)
-					self.update_humidity(sensors[3])
+					self.update_temp(round(temperature_f, 2))
+					self.update_humidity(sensors[3][:3])
 					self.update_red(sensors[4])
 					self.update_green(sensors[5])
 					self.update_blue(sensors[6])
