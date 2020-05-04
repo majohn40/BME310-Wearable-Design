@@ -2,6 +2,7 @@ import kivy
 kivy.require('1.11.1') # replace with your current kivy version !
 
 import time
+import datetime as dt
 import threading
 import serial
 
@@ -12,9 +13,11 @@ from kivy.uix.screenmanager import ScreenManager, Screen
 from kivymd.uix.button import MDRectangleFlatButton
 from kivymd.uix.label import MDLabel
 from kivymd.font_definitions import theme_font_styles
-from kivy.properties import ObjectProperty, StringProperty, NumericProperty
+from kivy.properties import ObjectProperty, StringProperty, NumericProperty, ListProperty
 from kivy.uix.screenmanager import Screen
 from kivy.clock import Clock, mainthread
+from kivy.core.window import Window
+
 
 from kivy.garden.matplotlib.backend_kivyagg import FigureCanvasKivyAgg
 from kivy.app import App
@@ -56,20 +59,28 @@ class Dashboard(Screen):
 	blue = NumericProperty()
 	uv_index = NumericProperty()
 	heat_index = NumericProperty()
+	xs = ListProperty();
+	ys = ListProperty()
 
 	stop = threading.Event()
+
 
 	def __init__(self, **kwargs):
 		super(Dashboard, self).__init__(**kwargs)
 		self.step_count = 0
 		self.uv_index = 0
 		self.heat_index = 100
-		fig = plt.figure()
-		plt.plot([1, 23, 2, 4])
-		fig.patch.set_facecolor((250/255,250/255,250/255,1))
-		ax = plt.gca()
-		ax.set_facecolor((250/255,250/255,250/255,1))
-		plt.ylabel('some numbers')
+
+		##Initialize Graph Stuff
+
+		self.fig = plt.figure()
+		self.fig.patch.set_facecolor((250/255,250/255,250/255,1))
+		self.ax = plt.gca()
+		self.ax.set_facecolor((250/255,250/255,250/255,1))
+		plt.ylabel('Average BPM')
+		self.xs = []
+		self.ys = []
+
 		self.start_serial_thread()
 
 	def start_serial_thread(self):
@@ -110,6 +121,7 @@ class Dashboard(Screen):
 					self.update_green(sensors[5])
 					self.update_blue(sensors[6])
 					self.update_step_count(sensors[7])
+					self.update_graph(self.xs, self.ys, sensors[7])
 
 
 	#Functions to update GUI Values
@@ -145,6 +157,18 @@ class Dashboard(Screen):
 	@mainthread
 	def update_heat_index(self, new_val):
 		self.heat_index = new_val;
+	
+	@mainthread
+	def update_graph(self,xs, ys, new_val):
+		xs.append(dt.datetime.now().strftime('%H:%M:%S.%f'))
+		ys.append(new_val)
+		xs = xs[-20:]
+		ys = ys[-20:]
+		self.ax.clear()
+		self.ax.plot(xs, ys)
+		plt.xticks(rotation=45, ha='right')
+		plt.subplots_adjust(bottom=0.30)
+		plt.draw()
 
 	pass
 

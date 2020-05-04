@@ -126,13 +126,11 @@ ScreenManager:
                         font_style: "H3"
             BoxLayout:
                 orientation: 'vertical'
-                size_hint: (0.8,1)
                 MyFigure:
                 BoxLayout:
                     orientation: 'horizontal'
-                    size_hint:
+                    size_hint:(1, 0.3)
                     BoxLayout:
-                        size_hint: (0.3, 1)
                         orientation: 'vertical'
                         MDLabel:                            
                             text:"Step Count"
@@ -143,6 +141,13 @@ ScreenManager:
                             size_hint: (1,0.8)
                             halign: "center"
                             font_style: "H2"
+
+                    MDLabel:
+                        text: ""
+                    MDLabel:
+                        text: ""
+                    MDLabel:
+                        text: ""
 
 
 
