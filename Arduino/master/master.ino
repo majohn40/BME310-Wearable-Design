@@ -183,6 +183,9 @@ void sendData() {
         sentMicros = micros();
         esp_now_send(NULL, bs, sizeof(myData)); // NULL means send to all peers
 
+//---------Update Screen---------------------------------------//
+        update_screen(myData.stepcount);
+
 //--------Debugging Statements--------------------------------//
         Serial.print(myData.gyro_y);Serial.print("\t");
         Serial.print(myData.Pulse);Serial.print("\t");
@@ -219,20 +222,24 @@ void welcomescroll(void) {
   display.setTextSize(2); // Draw 2X-scale text
   display.setTextColor(SSD1306_WHITE);
   display.setCursor(10, 0);
-  display.println(F("Welcome to HeatSleeve!"));
+  display.println("Welcome");
   display.display();      // Show initial text
   delay(100);
 
   // Scroll in various directions, pausing in-between:
   display.startscrollright(0x00, 0x0F);
-  delay(3000);
+  delay(1000);
   display.stopscroll();
   delay(1000);
 
-  display.clearDisplay();
-  display.setTextSize(1);
-  display.setTextColor(SSD1306_WHITE);        // Draw white text
-  display.setCursor(0,0);             // Start at top-left corner
-  display.println(F("Welcome to HeatSleeve!"));
   
+}
+void update_screen(int stepcount){
+  display.clearDisplay();
+  
+  display.setTextSize(1); // Draw 2X-scale text
+  display.setTextColor(SSD1306_WHITE);
+  display.setCursor(10, 0);
+  display.println("Step Count: "+String(stepcount));
+  display.display();      // Show initial text
 }
