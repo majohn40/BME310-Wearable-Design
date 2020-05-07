@@ -141,9 +141,17 @@ ScreenManager:
                             size_hint: (1,0.8)
                             halign: "center"
                             font_style: "H2"
-
-                    MDLabel:
-                        text: ""
+                    BoxLayout:
+                        orientation: 'vertical'
+                        MDLabel:                            
+                            text:"Body Temp"
+                            halign: "center"
+                            size_hint: (1, 0.2)
+                        MDLabel:
+                            text: str(root.body_temp)
+                            size_hint: (1,0.8)
+                            halign: "center"
+                            font_style: "H2"
                     MDLabel:
                         text: ""
                     MDLabel:
