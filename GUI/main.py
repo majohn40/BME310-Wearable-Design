@@ -60,6 +60,7 @@ class Dashboard(Screen):
 	uv_index = NumericProperty()
 	heat_index = NumericProperty()
 	body_temp = NumericProperty()
+	heartrate = NumericProperty()
 	xs = ListProperty();
 	ys = ListProperty()
 
@@ -114,7 +115,7 @@ class Dashboard(Screen):
 					except:
 						"Invalid character, try again"
 				sensors = sensor_packet.split("\t")
-				if len(sensors)==9: ##Stop code from exiting if it reads an incomplete packet
+				if len(sensors)==10: ##Stop code from exiting if it reads an incomplete packet
 					temperature_f = 1.8*float(sensors[2]) + 32
 					self.update_temp(round(temperature_f, 2))
 					self.update_humidity(sensors[3][:3])
@@ -123,6 +124,7 @@ class Dashboard(Screen):
 					self.update_blue(sensors[6])
 					self.update_step_count(sensors[7])
 					self.update_body_temp(sensors[8])
+					self.update_heartrate(sensors[9])
 					self.update_graph(self.xs, self.ys, sensors[7])
 					time.sleep(0.1)
 
@@ -163,8 +165,11 @@ class Dashboard(Screen):
 
 	@mainthread
 	def update_body_temp(self, new_val):
-		voltage = float(new_val)/1023;
-		self.body_temp = round(92.048+0.015*voltage, 2);
+		self.body_temp = round(15*(float(new_val)/1023) + 92.048, 1);
+
+	@mainthread
+	def update_heartrate(self, new_val):
+		self.heartrate = new_val;
 	
 	@mainthread
 	def update_graph(self,xs, ys, new_val):
