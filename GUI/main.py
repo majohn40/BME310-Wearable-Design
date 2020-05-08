@@ -57,7 +57,7 @@ class Dashboard(Screen):
 	red = NumericProperty()
 	green = NumericProperty()
 	blue = NumericProperty()
-	uv_index = NumericProperty()
+	uv = NumericProperty()
 	heat_index = NumericProperty()
 	body_temp = NumericProperty()
 	heartrate = NumericProperty()
@@ -70,7 +70,7 @@ class Dashboard(Screen):
 	def __init__(self, **kwargs):
 		super(Dashboard, self).__init__(**kwargs)
 		self.step_count = 0
-		self.uv_index = 0
+		self.uv= 0
 		self.heat_index = 100
 
 		##Initialize Graph Stuff
@@ -115,7 +115,7 @@ class Dashboard(Screen):
 					except:
 						"Invalid character, try again"
 				sensors = sensor_packet.split("\t")
-				if len(sensors)==10: ##Stop code from exiting if it reads an incomplete packet
+				if len(sensors)==9: ##Stop code from exiting if it reads an incomplete packet
 					temperature_f = 1.8*float(sensors[2]) + 32
 					self.update_temp(round(temperature_f, 2))
 					self.update_humidity(sensors[3][:3])
@@ -124,7 +124,8 @@ class Dashboard(Screen):
 					self.update_blue(sensors[6])
 					self.update_step_count(sensors[7])
 					self.update_body_temp(sensors[8])
-					self.update_heartrate(sensors[9])
+					##self.update_heartrate(sensors[9])
+					self.update_uv(sensors[8])
 					self.update_graph(self.xs, self.ys, sensors[7])
 					time.sleep(0.1)
 
@@ -153,11 +154,7 @@ class Dashboard(Screen):
 
 	@mainthread
 	def update_blue (self, new_val):
-		self.blue = new_val;
-
-	@mainthread
-	def update_uv_index (self, new_val):
-		self.uv_index = new_val;		
+		self.blue = new_val;	
 
 	@mainthread
 	def update_heat_index(self, new_val):
@@ -170,6 +167,11 @@ class Dashboard(Screen):
 	@mainthread
 	def update_heartrate(self, new_val):
 		self.heartrate = new_val;
+
+	@mainthread
+	def update_uv(self, new_val):
+		voltage = (float(new_val)/1023)
+		self.uv = round(0.62*voltage+.1262, 1)
 	
 	@mainthread
 	def update_graph(self,xs, ys, new_val):
