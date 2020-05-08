@@ -184,7 +184,9 @@ void sendData() {
         esp_now_send(NULL, bs, sizeof(myData)); // NULL means send to all peers
 
 //---------Update Screen---------------------------------------//
-        update_screen(myData.stepcount);
+        float temp_farenheit =  (1.8*myData.temp_ambient) + 32;
+        float heat_index = calculate_heat_index(myData.humidity, temp_farenheit);
+        update_screen(myData.stepcount, temp_farenheit, heat_index);
 
 //--------Debugging Statements--------------------------------//
         Serial.print(myData.gyro_y);Serial.print("\t");
@@ -224,22 +226,43 @@ void welcomescroll(void) {
   display.setCursor(10, 0);
   display.println("Welcome");
   display.display();      // Show initial text
-  delay(100);
-
-  // Scroll in various directions, pausing in-between:
-  display.startscrollright(0x00, 0x0F);
-  delay(1000);
-  display.stopscroll();
   delay(1000);
 
-  
 }
-void update_screen(int stepcount){
+void update_screen(int stepcount, float temperature, float heat_index){
   display.clearDisplay();
-  
   display.setTextSize(1); // Draw 2X-scale text
   display.setTextColor(SSD1306_WHITE);
-  display.setCursor(10, 0);
-  display.println("Step Count: "+String(stepcount));
+  display.setCursor(10,0);
+  display.print("Step Count: "+String(stepcount));
+  display.setCursor(10,8);
+  display.print("Temperature: " + String(temperature));
+  display.setCursor(10,16);
+  display.print("Heat Index: " + String(heat_index));
+  String warning = report_risk(heat_index);
+  display.setCursor(10,24);
+  display.print(warning);
   display.display();      // Show initial text
 }
+
+float calculate_heat_index(float RH, float T){
+  float heat_index = -42.379 + 2.04901523*T + 10.14333127*RH - .22475541*T*RH - .00683783*T*T - .05481717*RH*RH + .00122874*T*T*RH + .00085282*T*RH*RH - .00000199*T*T*RH*RH;
+  return heat_index;
+}
+String report_risk(float heat_index){
+  String warning_message;
+  if (heat_index > 130){
+    warning_message = "HS very likely!";
+  } else if (heat_index > 105){
+    warning_message = "HE, HS risk";
+  } else if (heat_index > 90){
+    warning_message = "Low Risk HE";
+  }else {
+    warning_message = "Safe to Exercise";
+  }
+  return warning_message;
+}
+
+
+
+  
