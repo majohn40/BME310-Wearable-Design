@@ -196,4 +196,6 @@ class ScreenManager(ScreenManager):
 
 
 if __name__ == "__main__":
+	Window.size = (1000, 700)
 	MainApp().run()
+

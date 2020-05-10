@@ -64,6 +64,13 @@ ScreenManager:
         BoxLayout:
             orientation: 'horizontal'
             size_hint: (1,0.2)
+            canvas:
+            #:import hex kivy.utils.get_color_from_hex
+                Color:
+                    rgba: hex('292f36')
+                Rectangle:
+                    pos: self.pos
+                    size: self.size
             MDLabel:
                 text:""
                 size_hint:(0.05, 1)
@@ -71,6 +78,8 @@ ScreenManager:
                 text: "Hello "+root.username
                 halign:"left"
                 font_style:"H3"
+                theme_text_color: "Custom"
+                text_color: hex('fafafa')
 
         BoxLayout:
             orientation: 'horizontal'
@@ -163,8 +172,7 @@ ScreenManager:
                             size_hint: (1,0.8)
                             halign: "center"
                             font_style: "H2"
-                    MDLabel:
-                        text: ""
+
 
 
 
