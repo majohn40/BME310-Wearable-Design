@@ -11,12 +11,17 @@ from kivy.lang import Builder
 from kivymd.app import MDApp
 from kivy.uix.screenmanager import ScreenManager, Screen
 from kivymd.uix.button import MDRectangleFlatButton
+from kivymd.uix.button import MDFlatButton
 from kivymd.uix.label import MDLabel
 from kivymd.font_definitions import theme_font_styles
 from kivy.properties import ObjectProperty, StringProperty, NumericProperty, ListProperty
 from kivy.uix.screenmanager import Screen
 from kivy.clock import Clock, mainthread
 from kivy.core.window import Window
+from kivymd.uix.dialog import MDDialog
+from kivymd.uix.list import OneLineAvatarIconListItem
+
+
 
 
 from kivy.garden.matplotlib.backend_kivyagg import FigureCanvasKivyAgg
@@ -24,6 +29,15 @@ from kivy.app import App
 from kivy.uix.boxlayout import BoxLayout
 import matplotlib.pyplot as plt
 
+class ItemConfirm(OneLineAvatarIconListItem):
+    divider = None
+
+    def set_icon(self, instance_check):
+        instance_check.active = True
+        check_list = instance_check.get_widgets(instance_check.group)
+        for check in check_list:
+            if check != instance_check:
+                check.active = False
 
 class MainApp(MDApp):
 	def __init__(self, **kwargs):
@@ -60,19 +74,24 @@ class Dashboard(Screen):
 	heat_index = NumericProperty()
 	body_temp = NumericProperty()
 	heartrate = NumericProperty()
-	heartrate_text = StringProperty()
+	calories_burned= NumericProperty()
 	xs = ListProperty();
 	ys = ListProperty()
-
+	heat_index = NumericProperty();
+	met_value = 6; 
+	start_time = NumericProperty();
 	stop = threading.Event()
+	dialog = None
+	weight = 100;
+
 
 
 	def __init__(self, **kwargs):
 		super(Dashboard, self).__init__(**kwargs)
 		self.step_count = 0
 		self.uv= 0
-		self.heat_index = 100
-		self.heartrate_text = ""
+		self.calories_burned = 0;
+		self.start_time = time.time()
 
 		##Initialize Graph Stuff
 
@@ -85,6 +104,28 @@ class Dashboard(Screen):
 		self.ys = []
 
 		self.start_serial_thread()
+
+	def show_exercise_dialog(self):
+		if not self.dialog:
+			self.dialog = MDDialog(
+				title="Select Exercise",
+                type="confirmation",
+                items=[
+                    ItemConfirm(text="Running", id="running"),
+                ],
+                buttons=[
+                    MDFlatButton(
+                        text="CANCEL"
+                    ),
+                    MDFlatButton(
+                        text="OK"
+                    ),
+                ],
+            )
+		self.dialog.open()
+
+	def record_start_time(self):
+		self.start = time.time();
 
 	def start_serial_thread(self):
 		threading.Thread(target=self.serial_thread).start()
@@ -127,7 +168,9 @@ class Dashboard(Screen):
 					self.update_body_temp(sensors[8])
 					self.update_heartrate(sensors[9])
 					self.update_uv(sensors[8])
+					self.update_heat_index(temperature_f,float(sensors[3][:3]))
 					self.update_graph(self.xs, self.ys, sensors[7])
+					self.update_calories(self.met_value, self.start_time, self.weight)
 
 
 	#Functions to update GUI Values
@@ -137,7 +180,7 @@ class Dashboard(Screen):
 
 	@mainthread 
 	def update_temp(self, new_val):
-		self.temperature = new_val;
+		self.temperature = round(new_val,1);
 
 
 	@mainthread
@@ -172,7 +215,15 @@ class Dashboard(Screen):
 	def update_uv(self, new_val):
 		voltage = (float(new_val)/1023)
 		self.uv = round(0.62*voltage+.1262, 1)
-	
+
+	@mainthread
+	def update_heat_index(self, T, RH):
+		self.heat_index = round(-42.379 + 2.04901523*T + 10.14333127*RH - .22475541*T*RH - .00683783*T*T - .05481717*RH*RH + .00122874*T*T*RH + .00085282*T*RH*RH - .00000199*T*T*RH*RH,1)
+
+	@mainthread
+	def update_calories(self, met, start, weight):
+		self.calories_burned = ((time.time()-start)/60)/60 * met*weight;
+
 	@mainthread
 	def update_graph(self,xs, ys, new_val):
 		xs.append(dt.datetime.now().strftime('%S'))
@@ -185,6 +236,7 @@ class Dashboard(Screen):
 		plt.subplots_adjust(bottom=0.30)
 		plt.draw()
 
+
 	pass
 
 class MyFigure(FigureCanvasKivyAgg):
@@ -196,6 +248,6 @@ class ScreenManager(ScreenManager):
 
 
 if __name__ == "__main__":
-	Window.size = (1000, 700)
+	Window.size = (1200, 700)
 	MainApp().run()
 

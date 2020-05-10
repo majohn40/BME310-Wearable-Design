@@ -14,6 +14,14 @@ ScreenManager:
         manager:screen_manager
         username: login_screen.username
 
+<ItemConfirm>
+    on_release: root.set_icon(check)
+
+    CheckboxRightWidget:
+        id: check
+        group: "check"
+
+
 <WelcomeScreen@Screen>
     name: "main"
 
@@ -80,12 +88,33 @@ ScreenManager:
                 font_style:"H3"
                 theme_text_color: "Custom"
                 text_color: hex('fafafa')
+            MDRectangleFlatButton:
+                text: "Start"
+                pos_hint: {"center_x": 0.2, "center_y":0.5}
+                on_release: root.show_exercise_dialog(),root.record_start_time();
+            MDLabel:
+                text:""
+                size_hint:(0.05, 1)
+            MDRectangleFlatButton:
+                text: "Advanced"
+                pos_hint: {"center_x": 0.2, "center_y":0.5}
+            MDLabel:
+                text:""
+                size_hint:(0.05, 1)
+
 
         BoxLayout:
             orientation: 'horizontal'
             BoxLayout:
                 size_hint: (0.2,1)
                 orientation: 'vertical'
+                canvas:
+            #:import hex kivy.utils.get_color_from_hex
+                    Color:
+                        rgba: hex('adacb5')
+                    Rectangle:
+                        pos: self.pos
+                        size: self.size
                 MDLabel:
                     text: ""
                     size_hint:(1,0.1)
@@ -95,11 +124,12 @@ ScreenManager:
                         text: "Temperature"
                         halign: "center"
                         size_hint: (1,0.2)
+                        font_style: "Subtitle1"
                     MDLabel:
-                        size_hint: (1, 0.8)
                         text: str(root.temperature)+u"\N{DEGREE SIGN}"+"F"
                         halign: "center"
                         font_style: "H3"
+                        
                 BoxLayout:
                     orientation: 'vertical'
                     MDLabel:
@@ -139,6 +169,12 @@ ScreenManager:
                 BoxLayout:
                     orientation: 'horizontal'
                     size_hint:(1, 0.3)
+                    canvas:
+                        Color:
+                            rgba: hex('C5C3C6')
+                        Rectangle:
+                            pos: self.pos
+                            size: self.size
                     BoxLayout:
                         orientation: 'vertical'
                         MDLabel:                            
@@ -149,7 +185,7 @@ ScreenManager:
                             text: str(root.step_count)
                             size_hint: (1,0.8)
                             halign: "center"
-                            font_style: "H2"
+                            font_style: "H3"
                     BoxLayout:
                         orientation: 'vertical'
                         MDLabel:                            
@@ -157,10 +193,10 @@ ScreenManager:
                             halign: "center"
                             size_hint: (1, 0.2)
                         MDLabel:
-                            text: str(root.body_temp)
+                            text: str(root.body_temp)+u"\N{DEGREE SIGN}"+"F"
                             size_hint: (1,0.8)
                             halign: "center"
-                            font_style: "H2"
+                            font_style: "H3"
                     BoxLayout:
                         orientation: 'vertical'
                         MDLabel:                            
@@ -168,10 +204,22 @@ ScreenManager:
                             halign: "center"
                             size_hint: (1, 0.2)
                         MDLabel:
-                            text: str(root.heartrate)
+                            text: str(round(root.heartrate,1))
                             size_hint: (1,0.8)
                             halign: "center"
-                            font_style: "H2"
+                            font_style: "H3"
+                    BoxLayout:
+                        orientation: 'vertical'
+                        MDLabel:                            
+                            text:"Calories Burned"
+                            halign: "center"
+                            size_hint: (1, 0.2)
+                        MDLabel:
+                            text: str(round(root.calories_burned,1))
+                            size_hint: (1,0.8)
+                            halign: "center"
+                            font_style: "H3"
+
 
 
 
