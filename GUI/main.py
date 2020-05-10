@@ -82,6 +82,7 @@ class Dashboard(Screen):
 	start_time = NumericProperty();
 	stop = threading.Event()
 	dialog = None
+	advanced_dialog = None
 	weight = 100;
 	warning_text = StringProperty('')
 
@@ -125,6 +126,21 @@ class Dashboard(Screen):
                 ],
             )
 		self.dialog.open()
+
+	def show_advanced_dialog(self):
+		if not self.advanced_dialog:
+			self.advanced_dialog = MDDialog(
+				title="Under Construction",
+                buttons=[
+                    MDFlatButton(
+                        text="CANCEL"
+                    ),
+                    MDFlatButton(
+                        text="ACCEPT"
+                    ),
+                ],
+            )
+		self.advanced_dialog.open()
 
 	def record_start_time(self):
 		self.start = time.time();
