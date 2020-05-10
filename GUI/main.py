@@ -53,7 +53,6 @@ class Dashboard(Screen):
 	step_count = NumericProperty()
 	temperature = NumericProperty()
 	humidity =  NumericProperty()
-	heartrate = 0
 	red = NumericProperty()
 	green = NumericProperty()
 	blue = NumericProperty()
@@ -61,6 +60,7 @@ class Dashboard(Screen):
 	heat_index = NumericProperty()
 	body_temp = NumericProperty()
 	heartrate = NumericProperty()
+	heartrate_text = StringProperty()
 	xs = ListProperty();
 	ys = ListProperty()
 
@@ -72,6 +72,7 @@ class Dashboard(Screen):
 		self.step_count = 0
 		self.uv= 0
 		self.heat_index = 100
+		self.heartrate_text = ""
 
 		##Initialize Graph Stuff
 
@@ -79,7 +80,7 @@ class Dashboard(Screen):
 		self.fig.patch.set_facecolor((250/255,250/255,250/255,1))
 		self.ax = plt.gca()
 		self.ax.set_facecolor((250/255,250/255,250/255,1))
-		plt.ylabel('Average BPM')
+		
 		self.xs = []
 		self.ys = []
 
@@ -115,7 +116,7 @@ class Dashboard(Screen):
 					except:
 						"Invalid character, try again"
 				sensors = sensor_packet.split("\t")
-				if len(sensors)==9: ##Stop code from exiting if it reads an incomplete packet
+				if len(sensors)==10: ##Stop code from exiting if it reads an incomplete packet
 					temperature_f = 1.8*float(sensors[2]) + 32
 					self.update_temp(round(temperature_f, 2))
 					self.update_humidity(sensors[3][:3])
@@ -124,10 +125,9 @@ class Dashboard(Screen):
 					self.update_blue(sensors[6])
 					self.update_step_count(sensors[7])
 					self.update_body_temp(sensors[8])
-					##self.update_heartrate(sensors[9])
+					self.update_heartrate(sensors[9])
 					self.update_uv(sensors[8])
 					self.update_graph(self.xs, self.ys, sensors[7])
-					time.sleep(0.1)
 
 
 	#Functions to update GUI Values
@@ -175,7 +175,7 @@ class Dashboard(Screen):
 	
 	@mainthread
 	def update_graph(self,xs, ys, new_val):
-		xs.append(dt.datetime.now().strftime('%H:%M:%S.%f'))
+		xs.append(dt.datetime.now().strftime('%S'))
 		ys.append(new_val)
 		xs = xs[-20:]
 		ys = ys[-20:]

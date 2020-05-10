@@ -7,6 +7,7 @@
 #include <SPI.h>
 #include <Wire.h>
 #include "MAX30105.h"
+#include "heartrate.h"
 #include <ESP8266WiFi.h>
 #include <SparkFunHTU21D.h>
 #include "Adafruit_TCS34725.h"
@@ -36,6 +37,7 @@ struct __attribute__((packed)) DataStruct {
     float red, green, blue;
     int stepcount;
     int bodytemp_ADC;
+    float heartrate;
 };
 
 DataStruct myData;
@@ -56,6 +58,8 @@ unsigned long blinkIntervalMillis = slowBlinkMillis;
 //-----------------MAX 30105 (PulseOx)---------------------------------------------//
 MAX30105 particleSensor; 
 byte ledPin = 14;
+long lastBeat = 0;
+float beatsPerMinute;
 
 //-----------------HTU21D Temp and Humidity Sensor---------------------------------//
 HTU21D humiditySensor;
@@ -78,7 +82,7 @@ int stepcount = 0;
 
 void setup() {
      
-    Serial.begin(115200); Serial.println();
+    Serial.begin(115200);
 
 //-----------------------Wireless Initiliazation--------------------------------------//
     Serial.println("Starting EspnowController.ino");
@@ -148,14 +152,27 @@ void loop() {
 //==============
 
 void sendData() {
+    long irValue = particleSensor.getIR();
+    Serial.println(irValue);
+    
+    if (checkForBeat(irValue) == true)
+    {
+      //We sensed a beat!
+      long delta = millis() - lastBeat;
+      lastBeat = millis();
+  
+      beatsPerMinute = 60 / (delta / 1000.0);
+    }
+
     if (millis() - lastSentMillis >= sendIntervalMillis) {
         lastSentMillis += sendIntervalMillis;
         
 //---------Add pulseox data to packet--------------------------//
-        long TempIr = particleSensor.getIR();
+        long TempIr = irValue;
         if ((TempIr < 1e9) && (TempIr > -1e9)){
             myData.Pulse = TempIr;
-        } 
+        }
+        myData.heartrate = beatsPerMinute;
 
 //---------Add accelerometer data to packet--------------------//
         myData.gyro_y = MPU6050getData();
@@ -197,9 +214,9 @@ void sendData() {
         Serial.print(int(myData.green)); Serial.print("\t"); 
         Serial.print(int(myData.blue));Serial.print("\t");
         Serial.print(myData.stepcount);Serial.print("\t");
-        Serial.print(myData.bodytemp_ADC);Serial.print("\n");
+        Serial.print(myData.bodytemp_ADC);Serial.print("\t");
+        Serial.print(myData.heartrate);Serial.print("\n");
         //Serial.println("sent data");
-
     }
 }
 

@@ -105,7 +105,7 @@ ScreenManager:
                 BoxLayout:
                     orientation: 'vertical'
                     MDLabel:
-                        text:"UV Index"
+                        text:"UV Intesity (mW/cm^2)"
                         halign: "center"
                         size_hint: (1, 0.2)
                     MDLabel:
@@ -152,8 +152,17 @@ ScreenManager:
                             size_hint: (1,0.8)
                             halign: "center"
                             font_style: "H2"
-                    MDLabel:
-                        text: ""
+                    BoxLayout:
+                        orientation: 'vertical'
+                        MDLabel:                            
+                            text:"Heart Rate"
+                            halign: "center"
+                            size_hint: (1, 0.2)
+                        MDLabel:
+                            text: str(root.heartrate)
+                            size_hint: (1,0.8)
+                            halign: "center"
+                            font_style: "H2"
                     MDLabel:
                         text: ""
 
