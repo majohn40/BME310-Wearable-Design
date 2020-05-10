@@ -83,7 +83,7 @@ class Dashboard(Screen):
 	stop = threading.Event()
 	dialog = None
 	weight = 100;
-	#warning_text = StringProperty('')
+	warning_text = StringProperty('')
 
 
 
@@ -93,7 +93,7 @@ class Dashboard(Screen):
 		self.uv= 0
 		self.calories_burned = 0;
 		self.start_time = time.time()
-		#self.warning_text = "Safe to Exercise"
+		self.warning_text = "Safe to Exercise"
 
 		##Initialize Graph Stuff
 
@@ -173,7 +173,7 @@ class Dashboard(Screen):
 					self.update_heat_index(temperature_f,float(sensors[3][:3]))
 					self.update_graph(self.xs, self.ys, sensors[7])
 					self.update_calories(self.met_value, self.start_time, self.weight)
-
+					self.update_warning(self.heat_index, self.body_temp);
 
 	#Functions to update GUI Values
 	@mainthread
@@ -227,11 +227,24 @@ class Dashboard(Screen):
 		self.calories_burned = ((time.time()-start)/60)/60 * met*weight;
 
 	@mainthread
+	def update_warning(self, heat_index, body_temp):
+		if body_temp >104:
+		    self.warning_text = "STOP! Overheating!";
+		elif heat_index > 105:
+		    self.warning_text = "Heat exhaustion, heat stroke risk";
+		elif heat_index > 90:
+		    self.warning_text = "Low Risk Heat exhaustion";
+		elif heat_index > 130:
+		    self.warning_text = "Heat stroke very likely!";
+		else:
+		    self.warning_text = "Safe to Exercise";
+
+	@mainthread
 	def update_graph(self,xs, ys, new_val):
-		xs.append(dt.datetime.now().strftime('%S'))
+		xs.append(time.time())
 		ys.append(new_val)
-		xs = xs[-20:]
-		ys = ys[-20:]
+		xs = xs[-40:]
+		ys = ys[-40:]
 		self.ax.clear()
 		self.ax.plot(xs, ys)
 		plt.xticks(rotation=45, ha='right')

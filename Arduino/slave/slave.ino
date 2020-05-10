@@ -26,11 +26,14 @@ void initVariant() {
 
 //-----------------------Packet Setup--------------------------------//
 struct __attribute__((packed)) DataStruct {
-    long Pulse;
     int16_t gyro_y;
+    long Pulse;
     float temp_ambient;
     float humidity;
     float red, green, blue;
+    int stepcount;
+    int bodytemp_ADC;
+    float heartrate;
 };
 
 DataStruct myData;
@@ -66,6 +69,14 @@ void loop() {
 
 void receiveCallBackFunction(uint8_t *senderMac, uint8_t *incomingData, uint8_t len) {
     memcpy(&myData, incomingData, sizeof(myData));
-    Serial.print(convert_int16_to_str(myData.gyro_y));
-    Serial.println();
+    Serial.print(myData.gyro_y);Serial.print("\t");
+    Serial.print(myData.Pulse);Serial.print("\t");
+    Serial.print(myData.temp_ambient);Serial.print("\t");
+    Serial.print(myData.humidity); Serial.print("\t"); 
+    Serial.print(int(myData.red)); Serial.print("\t"); 
+    Serial.print(int(myData.green)); Serial.print("\t"); 
+    Serial.print(int(myData.blue));Serial.print("\t");
+    Serial.print(myData.stepcount);Serial.print("\t");
+    Serial.print(myData.bodytemp_ADC);Serial.print("\t");
+    Serial.print(myData.heartrate);Serial.print("\n");
 }
