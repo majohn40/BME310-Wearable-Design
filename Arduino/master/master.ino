@@ -203,7 +203,7 @@ void sendData() {
 //---------Update Screen---------------------------------------//
         float temp_farenheit =  (1.8*myData.temp_ambient) + 32;
         float heat_index = calculate_heat_index(myData.humidity, temp_farenheit);
-        update_screen(myData.stepcount, temp_farenheit, heat_index);
+        update_screen(myData.stepcount, temp_farenheit, heat_index, myData.bodytemp_ADC);
 
 //--------Debugging Statements--------------------------------//
         Serial.print(myData.gyro_y);Serial.print("\t");
@@ -246,7 +246,7 @@ void welcomescroll(void) {
   delay(1000);
 
 }
-void update_screen(int stepcount, float temperature, float heat_index){
+void update_screen(int stepcount, float temperature, float heat_index, int bodytemp_ADC){
   display.clearDisplay();
   display.setTextSize(1); // Draw 2X-scale text
   display.setTextColor(SSD1306_WHITE);
@@ -256,7 +256,7 @@ void update_screen(int stepcount, float temperature, float heat_index){
   display.print("Temperature: " + String(temperature));
   display.setCursor(10,16);
   display.print("Heat Index: " + String(heat_index));
-  String warning = report_risk(heat_index);
+  String warning = report_risk(heat_index, bodytemp_ADC);
   display.setCursor(10,24);
   display.print(warning);
   display.display();      // Show initial text
@@ -266,15 +266,18 @@ float calculate_heat_index(float RH, float T){
   float heat_index = -42.379 + 2.04901523*T + 10.14333127*RH - .22475541*T*RH - .00683783*T*T - .05481717*RH*RH + .00122874*T*T*RH + .00085282*T*RH*RH - .00000199*T*T*RH*RH;
   return heat_index;
 }
-String report_risk(float heat_index){
+String report_risk(float heat_index, int bodytemp_ADC){
   String warning_message;
+  float body_temp = 15*bodytemp_ADC/1023 + 92.048;
   if (heat_index > 130){
     warning_message = "HS very likely!";
   } else if (heat_index > 105){
     warning_message = "HE, HS risk";
   } else if (heat_index > 90){
     warning_message = "Low Risk HE";
-  }else {
+  }else if (body_temp >104) {
+    warning_message = "STOP! Overheating!";
+  }else{
     warning_message = "Safe to Exercise";
   }
   return warning_message;
