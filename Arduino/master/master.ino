@@ -136,16 +136,17 @@ void setup() {
 //==============
 
 void loop() {
-    if (particleSensor.getIR() < 8000) {
-        //Serial.println("SLeeping");
-        ESP.deepSleep(1e6);
-
-    }
-    else{
-        //Serial.println("Waking up");
-        sendData();
-        //Serial.println(particleSensor.getIR()); //Send raw data to plotter
-    }
+  sendData();
+//    if (particleSensor.getIR() < 8000) {
+//        //Serial.println("SLeeping");
+//        ESP.deepSleep(1e6);
+//
+//    }
+//    else{
+//        //Serial.println("Waking up");
+//        sendData();
+//        //Serial.println(particleSensor.getIR()); //Send raw data to plotter
+//    }
 }
 
 //==============

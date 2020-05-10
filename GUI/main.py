@@ -83,6 +83,7 @@ class Dashboard(Screen):
 	stop = threading.Event()
 	dialog = None
 	weight = 100;
+	#warning_text = StringProperty('')
 
 
 
@@ -92,6 +93,7 @@ class Dashboard(Screen):
 		self.uv= 0
 		self.calories_burned = 0;
 		self.start_time = time.time()
+		#self.warning_text = "Safe to Exercise"
 
 		##Initialize Graph Stuff
 
