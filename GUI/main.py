@@ -102,6 +102,7 @@ class Dashboard(Screen):
 		self.fig.patch.set_facecolor((250/255,250/255,250/255,1))
 		self.ax = plt.gca()
 		self.ax.set_facecolor((250/255,250/255,250/255,1))
+		plt.ylabel('Step Count')
 		
 		self.xs = []
 		self.ys = []

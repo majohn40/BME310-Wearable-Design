@@ -137,7 +137,7 @@ void setup() {
 
 void loop() {
   sendData();
-//    if (particleSensor.getIR() < 8000) {
+//     if (particleSensor.getIR() < 8000) {
 //        //Serial.println("SLeeping");
 //        ESP.deepSleep(1e6);
 //
