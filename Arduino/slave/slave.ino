@@ -34,6 +34,7 @@ struct __attribute__((packed)) DataStruct {
     int stepcount;
     int bodytemp_ADC;
     float heartrate;
+    int uv_ADC;
 };
 
 DataStruct myData;

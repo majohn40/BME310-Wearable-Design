@@ -176,7 +176,7 @@ class Dashboard(Screen):
 					except:
 						"Invalid character, try again"
 				sensors = sensor_packet.split("\t")
-				if len(sensors)==10: ##Stop code from exiting if it reads an incomplete packet
+				if len(sensors)==11: ##Stop code from exiting if it reads an incomplete packet
 					temperature_f = 1.8*float(sensors[2]) + 32
 					self.update_temp(round(temperature_f, 2))
 					self.update_humidity(sensors[3][:3])
@@ -186,7 +186,7 @@ class Dashboard(Screen):
 					self.update_step_count(sensors[7])
 					self.update_body_temp(sensors[8])
 					self.update_heartrate(sensors[9])
-					self.update_uv(sensors[8])
+					self.update_uv(sensors[10])
 					self.update_heat_index(temperature_f,float(sensors[3][:3]))
 					self.update_graph(self.xs, self.ys, sensors[7])
 					self.update_calories(self.met_value, self.start_time, self.weight)

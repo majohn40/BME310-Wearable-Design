@@ -38,6 +38,7 @@ struct __attribute__((packed)) DataStruct {
     int stepcount;
     int bodytemp_ADC;
     float heartrate;
+    int uv_ADC;
 };
 
 DataStruct myData;
@@ -192,7 +193,14 @@ void sendData() {
         myData.blue = blue;
 
 //--------Add Body Temp Data to Packet-------------------------//
+        digitalWrite(9, HIGH);
         myData.bodytemp_ADC = analogRead(A0);
+        digitalWrite(9, LOW);
+
+//--------Add UV Data to packet--------------------------------//
+        digitalWrite(10, HIGH);
+        myData.uv_ADC = analogRead(A0);
+        digitalWrite(10, LOW);
 
 //---------Compress Packet and Send----------------------------//
         uint8_t bs[sizeof(myData)];
@@ -215,7 +223,9 @@ void sendData() {
         Serial.print(int(myData.blue));Serial.print("\t");
         Serial.print(myData.stepcount);Serial.print("\t");
         Serial.print(myData.bodytemp_ADC);Serial.print("\t");
-        Serial.print(myData.heartrate);Serial.print("\n");
+        Serial.print(myData.heartrate);Serial.print("\t");
+        Serial.print(myData.uv_ADC);Serial.print("\n");
+
         //Serial.println("sent data");
     }
 }
