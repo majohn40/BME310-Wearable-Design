@@ -79,5 +79,7 @@ void receiveCallBackFunction(uint8_t *senderMac, uint8_t *incomingData, uint8_t 
     Serial.print(int(myData.blue));Serial.print("\t");
     Serial.print(myData.stepcount);Serial.print("\t");
     Serial.print(myData.bodytemp_ADC);Serial.print("\t");
-    Serial.print(myData.heartrate);Serial.print("\n");
+    Serial.print(myData.heartrate);Serial.print("\t");
+    Serial.print(myData.uv_ADC);Serial.print("\n");
+
 }
