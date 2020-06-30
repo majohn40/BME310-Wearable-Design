@@ -1,6 +1,8 @@
 # BME 310 Wearable Design
 This repository contains the source code for the ESP8266-based "Heatsleeve" wearable and the Python Kivy based companion app which allows users to easily view more data and access greater device capabilities.
 
+The "Heatsleeve" is a wearable device designed as a final group project for the Biomedical Engineering Junior Design course, BME 310, at University of Arizona. It was a wearable intended to prevent heat exhaustion and heat stroke in high risk individuals, which is particularly relevant in Arizona where we regularly see summer highs of 120+ degrees F. 
+
 This repo is organized into two primary folders, `GUI` and `Arduino`
 
 The `GUI` folder contains two files: `heatsleeveKivy.kv` and `main.py`
